@@ -1,17 +1,13 @@
----?image=assets/bg1.png
+---?image=assets/bg1.jpeg
 
-![rails-train](assets/slide1.png)
+---?image=assets/bg2.jpeg
 
-### From
+---?image=assets/bg3.jpeg
 
-# Riding the Rails
+---?image=assets/bg4.jpeg
 
----?image=assets/bg2.png
+---?image=assets/bg5.jpeg
 
-![phoenix](assets/slide2.png)
+---?image=assets/bg6.jpeg
 
-### To a
 
-# Ticket
-# To
-# Ride
