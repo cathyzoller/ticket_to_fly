@@ -1,3 +1,5 @@
-highlight: Ir-black
+highlight : ir-black
+
 theme-override : assets/css/PITCHME.css
-background : assets/bg7.jpg
+
+background : assets/bg7.jpeg
