@@ -6,7 +6,7 @@ Note: How many rails devs?  Elixir devs?  Just starting out?  Anything else you'
 
 ---?image=assets/bg3.jpeg
 
-Note: This is a practical talk about practical things, like images and functions.  Compare/Contrast (mostly contrast) with rails counterparts
+Note: This is practical - Compare/Contrast (mostly contrast) with rails counterparts.
 
 
 ---?image=assets/bg4.jpeg
@@ -56,17 +56,23 @@ end
 
 ---
 
+## Plug.Upload Struct
+
+### within changeset function params
+
+---
+
 ```elixir
 #[debug] Processing by Knitwhiz.DesignController.update/2
 
 Parameters: %{
   "id" => "6",
   "design" => %{
-    "description" => "vest",
-    "name" => "Paula's vest",
+    "description" => "doggie sweater",
+    "name" => "Fido's Sweater",
     "photo" => %Plug.Upload{
       content_type: "image/png",
-      filename: "Knitting@0.5x.png",
+      filename: "fidos-sweater.png",
       path: "/var/folders/2s/fs..66/T//plug-1493/multipart-53892"
     },
     "supplies" => "yarn"
@@ -77,16 +83,14 @@ Parameters: %{
 @[1-15]
 @[8-12]
 
-## Plug.Upload Struct
 
-#### within changeset function params
 
 Note: Plug.Upload  Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
 
 
 ---
 
-# Image Gotcha
+## Image Gotcha
 
 ### No Record ID on Create
 
@@ -101,24 +105,18 @@ end
 ```
 
 Note: Scope.id not available on create.
-Workaround:  Use separate changesets for create & update actions
 
 ---
 
-# Workaround
+## Workaround 1
 
-## User updloads images
+### Use separate changesets for create and update
 
-#### separate changesets for create and update
+---?image=assets/small-dog-template.jpg
 
----
-
-# Workaround
-
-## Programatically Insert images
+## Programatically Insert Images
 
 ---
-
 
 ```elixir
 
@@ -148,6 +146,7 @@ case Repo.insert(changeset) do
 
 @[5-6]
 
+### An Example
 
 Note: Explain Background - User form for other info -> onCreate, get image associated with parent
 
@@ -173,13 +172,15 @@ Note: Explain Background - User form for other info -> onCreate, get image assoc
 
 #### https://github.com/ex-aws/ex_aws
 
-Note: use mix task to move images on s3
+Note: use mix task to move images onto s3 when ready...
 
 ---
 
 # B is for Backend
 
-### Phoenix as an API
+---
+
+## Phoenix as an API
 
 ### Receive Image Data from a Client Application
 
@@ -187,11 +188,10 @@ Note: use mix task to move images on s3
   * Arc supports binary data
 * Send FormData
 
-Note: often no need to use binary data
+Note: often no need to use binary data (rails... used binary data)
+
 
 ---
-
-## Form Component (React/Redux)
 
 ```javascript
 
@@ -225,9 +225,9 @@ handlePhotoUpdate() {
 
 @[1-16]
 
----
+### React Form Component
 
-## Update Action
+---
 
 ```javascript
 
@@ -260,6 +260,8 @@ export const updatePhoto = (id) => (
 
 @[14]
 
+### Update Action
+
 Note: FormData objects require a POST request
 
 ---
@@ -275,37 +277,121 @@ Note: FormData objects require a POST request
 
 # C is for Copy
 
----
+---?image=assets/small-dog-template.jpg
 
-## SVG Files
-
-### 1. Copy inside a Mix Task
+### Copy inside a Mix Task
 
 #### Using File Module
 
-```elixir
+Note: suppose admin, not using Arc, etc. & want to copy a template to further manipulate.
 
+---
+
+#### Elixir
+
+```elixir
 cp(source, destination, callback \\ fn _, _ -> true end)
 # => {:ok} OR {:error, :reason}
 ```
-#### OR
+#### OR Erlang
 
 ```elixir
 
 copy(source, destination, bytes_count \\ :infinity)
 # => {:ok, :bytes_copied} OR {:error, :reason}
 ```
+Note:  copy without using Arc Storage, or copy from S3 for example...
+
+---?image=assets/small-dog.jpg
+
+### User manipulation of SVG file
 
 ---
 
-### 2. User manipulation
 
-#### Using D3 or similar library
+
+```xml
+<svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <g>
+  <title>Layer 1</title>
+  <path
+    id="svg_6"
+    stroke="#5656ff"
+    d="m159.408943,208.251741c31.05263,-13 64.10526,-35
+      87.15789,-60c62.94737,4.66667 128.89473,
+      -9.66667 188.8421,14c59.94737,23.66667 19.62907,
+      84 -49.55639,116l-96.74435,27c-90.45113,
+      1.33333 -110.41354,-52.33333 -129.69925,-97z"
+    stroke-linecap="null"
+    stroke-linejoin="null"
+    stroke-dasharray="null"
+    stroke-width="5" fill="#ff56ff" />
+ </g>
+</svg>
+
+```
+#### Doggie Sweater Template SVG
+
+---?image=assets/big-dog-1.jpg
+
+### Using D3 or similar library
+
+---?image=assets/big-dog-2.jpg
+
+### Save the Transformed File...
 
 ---
 
-### 3. Save the Transformed File
+#### Using Nokogiri with Rails
 
+```ruby
+# AJAX POST -> updates svg path with Nokogiri
+
+  def update_path
+    if params[:id] && params[:svg-dpath]
+      @pattern_piece = PatternPiece.find(params[:id].to_i)
+
+      file_path = "#{Rails.root}/public/#{@pattern_piece.image_url}"
+
+      doc = Nokogiri::XML(File.read file_path)
+
+      doc.css("path").first["d"] = params[:svg-dpath]
+
+      File.open(file_path,'w') {|f| doc.write_xml_to f}
+    end
+```
+@[1-14]
+
+@[7]
+
+@[9-11]
+
+@[13]
+
+Note:  get the file path, then set the
+
+---
+#### Using Floki with Phoenix
+
+```elixir
+@doc """
+  Changes the attribute values of the elements matched by `selector`
+  with the function `mutation` and returns the whole element tree
+
+  svg
+  |> Floki.attr("path", "d", fn_ ->  params["svg_dpath"]) end)
+
+```
+
+Note: (tree, element, attribute, mutation function)
+
+---
+
+### Acknowledgements
+
+#### <a href="https://www.freepik.com/free-photos-vectors/dog">Dog vector created by Freepik</a>
+
+#### https://github.com/philss/floki/blob/master/lib/floki.ex
 
 
 
