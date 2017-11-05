@@ -16,4 +16,9 @@
 
 .reveal h3, .reveal h4 {
   font-family: "Noteworthy", "League Gothic", Impact, sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.hljs {
+  background: transparent;
 }
