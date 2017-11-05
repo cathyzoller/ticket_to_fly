@@ -5,6 +5,13 @@
 
 .reveal h1, .reveal h2 {
   font-family: "Phosphate", "League Gothic", Impact, sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.reveal h2 {
+  font-size: 2em;
+  font-family: "Phosphate", "League Gothic", Impact, sans-serif;
+  letter-spacing: 0.05em;
 }
 
 .reveal h3, .reveal h4 {
