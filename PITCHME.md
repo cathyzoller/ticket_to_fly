@@ -123,28 +123,28 @@ Note: Scope.id not available on create.
 case Repo.insert(changeset) do
 
   {:ok, pattern} ->
-
-    template = Repo.get!(Template, pattern_params["template_id"])
+    template = Repo.get!(
+      Template, pattern_params["template_id"])
 
     path = "priv/static/images/templates/#{template.id}"
 
     PatternImage.store({path, pattern})
 
-    pattern_img_param = %{pattern_image_url: "../patterns/#{pattern.id}"}
+    pattern_img_param = %{
+      pattern_image_url: "../patterns/#{pattern.id}"}
 
     |> update_pattern
-
   end
 
 ```
 
-@[1-2]
+@[1-3]
 
-@[2-3]
+@[4-5]
 
-@[3-4]
+@[4-9]
 
-@[5-6]
+@[1-15]
 
 ### An Example
 
