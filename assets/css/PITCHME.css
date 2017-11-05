@@ -2,3 +2,13 @@
   border: 0;
   box-shadow: none;
 }
+
+h1, h2 {
+  color: white;
+  font-family: 'Phosphate';
+}
+
+h3, h4 {
+  color: white;
+  font-family: 'Noteworthy';
+}

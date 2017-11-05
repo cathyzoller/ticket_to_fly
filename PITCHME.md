@@ -103,7 +103,7 @@ end
 Note: Scope.id not available on create.
 Workaround:  Use separate changesets for create & update actions
 
-+++
+---
 
 # Workaround
 
@@ -111,11 +111,13 @@ Workaround:  Use separate changesets for create & update actions
 
 #### separate changesets for create and update
 
-+++
+---
 
 # Workaround
 
 ## Programatically Insert images
+
+---
 
 
 ```elixir
@@ -157,11 +159,13 @@ Note: Explain Background - User form for other info -> onCreate, get image assoc
 
 #### https://github.com/stavro/arc
 
-+++
+---
 
 ## Amazon S3
 
 ## Without Arc (Elixir apps)
+
+---
 
 * :ex_aws & :ex_aws_s3 packages
 * Create a Module
@@ -183,7 +187,7 @@ Note: use mix task to move images on s3
 
 Note: often no need to use binary data
 
-+++
+---
 
 ## Form Component (React/Redux)
 
@@ -219,7 +223,7 @@ handlePhotoUpdate() {
 
 @[1-16]
 
-+++
+---
 
 ## Update Action
 
@@ -256,7 +260,7 @@ export const updatePhoto = (id) => (
 
 Note: FormData objects require a POST request
 
-+++
+---
 
 ## FormData objects must be sent in a POST request
 
@@ -290,13 +294,13 @@ copy(source, destination, bytes_count \\ :infinity)
 # => {:ok, :bytes_copied} OR {:error, :reason}
 ```
 
-+++
+---
 
 ### 2. User manipulation
 
 #### Using D3 or similar library
 
-+++
+---
 
 ### 3. Save the Transformed File
 
