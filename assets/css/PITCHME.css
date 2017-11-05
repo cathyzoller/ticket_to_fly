@@ -1,9 +1,9 @@
-.reveal section {
-  img {
-    border: 0;
-    box-shadow: none;
-  }
+.reveal section img {
+  border: 0;
+  box-shadow: none;
+}
 
+.reveal {
   h1, h2 {
     color: white;
     font-family: 'Phosphate';
@@ -14,11 +14,6 @@
     font-family: 'Noteworthy';
   }
 
-  a, ul li a, h4 a {
+  ul, a {
     color: white;
   }
-
-  ul {
-    color: white;
-  }
-}
