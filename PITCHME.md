@@ -169,7 +169,9 @@ Note: Explain Background - User form for other info -> onCreate, get image assoc
 
 * :ex_aws & :ex_aws_s3 packages
 * Create a Module
-* Follow the README - https://github.com/ex-aws/ex_aws
+* Follow the README
+
+#### https://github.com/ex-aws/ex_aws
 
 Note: use mix task to move images on s3
 

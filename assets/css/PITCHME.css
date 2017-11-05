@@ -1,5 +1,5 @@
-.reveal {
-  section img {
+.reveal section {
+  img {
     border: 0;
     box-shadow: none;
   }
@@ -14,7 +14,11 @@
     font-family: 'Noteworthy';
   }
 
-  a {
+  a, ul li a, h4 a {
+    color: white;
+  }
+
+  ul {
     color: white;
   }
 }
