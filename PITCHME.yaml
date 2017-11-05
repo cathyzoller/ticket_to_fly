@@ -1,5 +1,7 @@
 highlight : ir-black
 
+theme: night
+
 theme-override : assets/css/PITCHME.css
 
 background : assets/bg7.jpeg

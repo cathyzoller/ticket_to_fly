@@ -3,17 +3,10 @@
   box-shadow: none;
 }
 
-.reveal {
-  h1, h2 {
-    color: white;
-    font-family: 'Phosphate';
-  }
+.reveal h1, .reveal h2 {
+  font-family: "Phosphate", "League Gothic", Impact, sans-serif;
+}
 
-  h3, h4 {
-    color: white;
-    font-family: 'Noteworthy';
-  }
-
-  ul, a {
-    color: white;
-  }
+.reveal h3, .reveal h4 {
+  font-family: "Noteworthy", "League Gothic", Impact, sans-serif;
+}
