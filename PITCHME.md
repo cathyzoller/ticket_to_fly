@@ -108,15 +108,15 @@ Note: Scope.id not available on create.
 
 ---
 
-## Workaround 1
+### Workaround
 
-### Use separate changesets for create and update
+#### Use separate changesets for create and update
 
 ---
 
 <img src="assets/small-dog-template.jpg" width="50%" height="50%" />
 
-## Programatically Insert Images
+#### Programatically Insert Images
 
 ---
 
@@ -186,10 +186,6 @@ Note: use mix task to move images onto s3 when ready...
 
 ### Receives Image Data from a Client Application
 
----
-
-* Send binary data
-* Send FormData
 
 Note: often no need to use binary data (rails... used binary data) but Arc supports it
 
@@ -269,7 +265,7 @@ Note: FormData objects require a POST request
 
 ---
 
-## FormData objects must be sent in a POST request
+### FormData objects must be sent in a POST request
 
 #### update router.ex
 
