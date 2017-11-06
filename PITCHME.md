@@ -26,17 +26,21 @@ Note: Local store (as opposed to cdn), use Arc Ecto to integrate the two. Going 
 ## Multiple Images
 
 ```elixir
-<%= file_input @form, :image_uploads,
+    <%= file_input @form, :image_uploads,
 
-    class: "validate",
+      class: "validate",
 
-    multiple: true,
+      multiple: true,
 
-    name: "user[image_upload][]" %>
+      name: "user[image_upload][]" %>
 ```
 
 Note: From here, you can iterate over the map of files for processing or saving, either as embeds array, or association.
 
+
+---
+
+![fido-sweater](assets/fido-sweater.jpg)
 
 ---
 
@@ -53,6 +57,30 @@ end
 @[1-3]
 @[4]
 @[1-7]
+
+---
+
+## Image Gotcha
+
+### No Record ID on Create
+
+```elixir
+
+# uploaders/avatar
+def storage_dir(_, {_, scope}) do
+
+   "priv/static/images/user/#{scope.id}"
+
+end
+```
+
+Note: Scope.id not available on create.
+
+---
+
+### Workaround
+
+#### Use separate changesets for create and update
 
 ---
 
@@ -87,31 +115,6 @@ parameters: %{
 
 Note: Plug.Upload  Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
 
-
----
-
-## Image Gotcha
-
-### No Record ID on Create
-
-```elixir
-
-# uploaders/avatar
-def storage_dir(_, {_, scope}) do
-
-   "priv/static/images/user/#{scope.id}"
-
-end
-```
-
-Note: Scope.id not available on create.
-
----
-
-### Workaround
-
-#### Use separate changesets for create and update
-
 ---
 
 <img src="assets/small-dog-template.jpg" width="50%" height="50%" />
@@ -134,7 +137,6 @@ case Repo.insert(changeset) do
 
     pattern_img_param = %{
       pattern_image_url: "../patterns/#{pattern.id}"}
-
     |> update_pattern
   end
 
@@ -146,7 +148,7 @@ case Repo.insert(changeset) do
 
 @[4-9]
 
-@[1-15]
+@[1-14]
 
 ### An Example
 
@@ -311,9 +313,8 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 
 ---
 
-
-
 ```xml
+
 <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
  <g>
   <title>Layer 1</title>
@@ -395,18 +396,123 @@ Note:  get the file path, then set the
 Note: (tree, element, attribute, mutation function)
 
 ---
-### Links
 
-#### https://github.com/philss/floki/blob/master/lib/floki.ex
+## The Pipe Operator
 
-#### https://gitpitch.com/cathyzoller/ticket_to_fly
+---?image=assets/pipe.jpg
 
 ---
 
-### Acknowledgements
+### Rails vs Phoenix
+
+---
+
+#### Rails
+
+* conditionals
+* ActiveRecord::Base.transaction
+
+#### Phoenix/Elixir
+
+* pattern matching
+* guard clauses
+* Ecto Multi
+
+Note: only addressing Ecto.Multi here (atomically apply several functions).  Locking omitted but may pass with query params in Ecto.
+
+---
+
+### Ecto Multi
+
+```elixir
+  def manage_stripe_charge(user, design_id, design_name, token, amount) do
+    Multi.new
+    |> Multi.run(:retrieve_customer, &retrieve_customer(&1, user.stripe_id, token))
+    |> Multi.run(:update_user, &update_user(&1.retrieve_customer, user))
+    |> Multi.run(:stripe_charge, &stripe_charge(&1.retrieve_customer, amount))
+    |> Multi.run(:insert_project, &insert_order(&1.stripe_charge, user.id, design_id))
+    |> Multi.run(:insert_charge, &insert_charge(&1.insert_order))
+    |> Multi.run(:send_dog_treat, &send_dog_treat(user))
+  end
+
+  defp retrieve_customer(val, customer_id, token) when is_nil(customer_id) do
+    register_customer(val, token["email"], token["id"])
+  end
+  defp retrieve_customer(_, customer_id, _) do
+    Stripe.Customer.retrieve(customer_id)
+  end
+  # ...
+
+```
+
+@[1-16]
+
+@[1-3, 11-16]
+
+Note) Ecto.Multi is a data structure for grouping multiple Repo operations. functions include "insert", "update" & delete in addition to 'run'.  Changesets checked for these.  This is very useful when an operation depends on the value of a previous operation. For this reason, the function given as callback to run/3 and run/5 will receive all changes performed by the multi so far as a map in the first argument.  The function given to run must return {:ok, value} or {:error, value} as its result.
+
+---
+
+### Call the function
+
+```elixir
+    charge = Repo.transaction(
+      PaymentService.manage_stripe_charge(user, design_id, design_name, token, retail)
+    )
+```
+
+#### Returns
+
+* {:ok, %{return_values}}
+* {:error, failed_operation, failed_value, changes_so_far}
+
+Note:  The multi map is an accumulator ... which brings us to our last topic:  Recursion
+
+---
+## Recursion
+
+---
+
+```elixir
+
+  defp check_treats(treats_array) do
+    _check_treats(treats_array, %{total_count: 0, types: [])
+  end
+
+  defp _check_treats([], info_map), do: info_map
+  defp _check_treats([head | tail], info_map) do
+    treat_info = get_treat_info(head)
+
+    _check_treats(tail,
+      %{total_count: treat_info.count + info_map.total_count,
+        types: [treat_info | info_map.types]
+      })
+  end
+
+  defp get_treat_info(treat) do
+    %{count: treat.count, name: treat.name}
+  end
+```
+
+---
+
+## Links
 
 
-#### <a href="https://www.freepik.com/free-photos-vectors/dog">Dog vector created by Freepik</a>
+#### Floki - https://github.com/philss/floki/blob/master/lib/floki.ex
+
+#### Ecto.Multi - https://hexdocs.pm/ecto/Ecto.Multi.html
+
+#### Stripity Stripe - https://hexdocs.pm/stripity_stripe/2.0.0-alpha.10
+
+#### Ticket to Fly - https://gitpitch.com/cathyzoller/ticket_to_fly
+
+---
+
+## Acknowledgements
+
+
+#### "https://www.freepik.com/free-photos-vectors/dog"
 
 #### http://moderndogmagazine.com/articles/dog-sweaters-so-cute-youll-want-wear-them/91180
 
