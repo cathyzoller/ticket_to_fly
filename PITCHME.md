@@ -502,7 +502,7 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
 
 #### Floki
 
-##### https://github.com/philss/floki/blob/master/lib/floki.ex
+##### https://github.com/philss/floki
 
 
 #### Ecto.Multi
