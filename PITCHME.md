@@ -112,7 +112,9 @@ Note: Scope.id not available on create.
 
 ### Use separate changesets for create and update
 
----?image=assets/small-dog-template.jpg
+---
+
+<img src="assets/small-dog-template.jpg" width="50%" height="50%" />
 
 ## Programatically Insert Images
 
@@ -280,7 +282,7 @@ Note: FormData objects require a POST request
 
 ---
 
-![small-dog-template](small-dog-template.jpg)
+<img src="assets/small-dog-template.jpg" width="50%" height="50%" />
 
 ### Copy inside a Mix Task
 
@@ -307,7 +309,7 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 
 ---
 
-![small-dog](assets/small-dog.jpg)
+<img src="assets/small-dog.jpg" width="50%" height="50%" />
 
 ### User manipulation of SVG file
 
@@ -330,21 +332,23 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
     stroke-linecap="null"
     stroke-linejoin="null"
     stroke-dasharray="null"
-    stroke-width="5" fill="#ff56ff" />
+    stroke-width="5"
+    fill="#ff56ff" />
  </g>
 </svg>
 
 ```
+
 #### Dog Sweater Template SVG
 
 ---
 
-![big-dog](assets/big-dog-1.jpg)
+<img src="assets/big-dog-1.jpg" width="50%" height="50%" />
 
 ### Using D3 or similar library
 
 ---
-<img src="assets/big-dog-2.jpg" width="75%" height="75%" />
+<img src="assets/big-dog-2.jpg" width="50%" height="50%" />
 
 ### Save the Transformed File...
 
