@@ -344,8 +344,7 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 ### Using D3 or similar library
 
 ---
-
-![big-dog-2](assets/big-dog-2.jpg)
+<img src="assets/big-dog-2.jpg" width="75%" height="75%" />
 
 ### Save the Transformed File...
 
@@ -396,13 +395,20 @@ Note:  get the file path, then set the
 Note: (tree, element, attribute, mutation function)
 
 ---
+### Links
+
+#### https://github.com/philss/floki/blob/master/lib/floki.ex
+
+#### https://gitpitch.com/cathyzoller/ticket_to_fly
+
+---
 
 ### Acknowledgements
 
 
 #### <a href="https://www.freepik.com/free-photos-vectors/dog">Dog vector created by Freepik</a>
 
-#### https://github.com/philss/floki/blob/master/lib/floki.ex
+#### http://moderndogmagazine.com/articles/dog-sweaters-so-cute-youll-want-wear-them/91180
 
 
 
