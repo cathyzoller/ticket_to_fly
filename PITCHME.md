@@ -498,18 +498,23 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
 
 ## Links
 
+---
 
 #### Floki
 
 ##### https://github.com/philss/floki/blob/master/lib/floki.ex
 
+
 #### Ecto.Multi
 
 ##### https://hexdocs.pm/ecto/Ecto.Multi.html
 
+---
+
 #### Stripity Stripe
 
 ##### https://hexdocs.pm/stripity_stripe/2.0.0-alpha.10
+
 
 #### Ticket to Fly
 
@@ -520,7 +525,7 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
 ## Acknowledgements
 
 
-#### "https://www.freepik.com/free-photos-vectors/dog"
+#### https://www.freepik.com/free-photos-vectors/dog
 
 #### http://moderndogmagazine.com/articles/dog-sweaters-so-cute-youll-want-wear-them/91180
 
