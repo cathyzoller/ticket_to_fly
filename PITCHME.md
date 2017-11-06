@@ -65,7 +65,7 @@ end
 ```elixir
 #[debug] Processing by Knitwhiz.DesignController.update/2
 
-Parameters: %{
+parameters: %{
   "id" => "6",
   "design" => %{
     "description" => "doggie sweater",
@@ -160,11 +160,11 @@ Note: Explain Background - User form for other info -> onCreate, get image assoc
 
 ---
 
-## Amazon S3
-
-## Without Arc (Elixir apps)
+## Amazon S3 Without Arc
 
 ---
+
+### Elixir apps
 
 * :ex_aws & :ex_aws_s3 packages
 * Create a Module
@@ -182,13 +182,14 @@ Note: use mix task to move images onto s3 when ready...
 
 ## Phoenix as an API
 
-### Receive Image Data from a Client Application
+### Receives Image Data from a Client Application
+
+---
 
 * Send binary data
-  * Arc supports binary data
 * Send FormData
 
-Note: often no need to use binary data (rails... used binary data)
+Note: often no need to use binary data (rails... used binary data) but Arc supports it
 
 
 ---
@@ -277,7 +278,9 @@ Note: FormData objects require a POST request
 
 # C is for Copy
 
----?image=assets/small-dog-template.jpg
+---
+
+![small-dog-template](small-dog-template.jpg)
 
 ### Copy inside a Mix Task
 
@@ -302,7 +305,9 @@ copy(source, destination, bytes_count \\ :infinity)
 ```
 Note:  copy without using Arc Storage, or copy from S3 for example...
 
----?image=assets/small-dog.jpg
+---
+
+![small-dog](assets/small-dog.jpg)
 
 ### User manipulation of SVG file
 
@@ -330,13 +335,17 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 </svg>
 
 ```
-#### Doggie Sweater Template SVG
+#### Dog Sweater Template SVG
 
----?image=assets/big-dog-1.jpg
+---
+
+![big-dog](assets/big-dog-1.jpg)
 
 ### Using D3 or similar library
 
----?image=assets/big-dog-2.jpg
+---
+
+![big-dog-2](assets/big-dog-2.jpg)
 
 ### Save the Transformed File...
 
@@ -348,14 +357,14 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 # AJAX POST -> updates svg path with Nokogiri
 
   def update_path
-    if params[:id] && params[:svg-dpath]
-      @pattern_piece = PatternPiece.find(params[:id].to_i)
+    if params[:id] && params[:svg_d_attr]
+      @pattern = Pattern.find(params[:id].to_i)
 
-      file_path = "#{Rails.root}/public/#{@pattern_piece.image_url}"
+      file_path = "#{Rails.root}/public/#{@pattern.image_url}"
 
       doc = Nokogiri::XML(File.read file_path)
 
-      doc.css("path").first["d"] = params[:svg-dpath]
+      doc.css("path").first["d"] = params[:svg_d_attr]
 
       File.open(file_path,'w') {|f| doc.write_xml_to f}
     end
@@ -375,11 +384,12 @@ Note:  get the file path, then set the
 
 ```elixir
 @doc """
-  Changes the attribute values of the elements matched by `selector`
-  with the function `mutation` and returns the whole element tree
+  Changes the attribute values of the elements matched
+  by `selector` with the function `mutation` and returns
+  the whole element tree
 
   svg
-  |> Floki.attr("path", "d", fn_ ->  params["svg_dpath"]) end)
+  |> Floki.attr("path", "d", fn_ ->  params["svg_d_attr"]) end)
 
 ```
 
@@ -388,6 +398,7 @@ Note: (tree, element, attribute, mutation function)
 ---
 
 ### Acknowledgements
+
 
 #### <a href="https://www.freepik.com/free-photos-vectors/dog">Dog vector created by Freepik</a>
 
