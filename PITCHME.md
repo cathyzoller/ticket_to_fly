@@ -449,7 +449,7 @@ Note: only addressing Ecto.Multi here (atomically apply several functions).  Loc
 
 @[1-3, 11-16]
 
-Note) Ecto.Multi is a data structure for grouping multiple Repo operations. functions include "insert", "update" & delete in addition to 'run'.  Changesets checked for these.  This is very useful when an operation depends on the value of a previous operation. For this reason, the function given as callback to run/3 and run/5 will receive all changes performed by the multi so far as a map in the first argument.  The function given to run must return {:ok, value} or {:error, value} as its result.
+Note: Ecto.Multi is a data structure for grouping multiple Repo operations. functions include "insert", "update" & delete in addition to 'run'.  Changesets checked for these.  This is very useful when an operation depends on the value of a previous operation. For this reason, the function given as callback to run/3 and run/5 will receive all changes performed by the multi so far as a map in the first argument.  The function given to run must return {:ok, value} or {:error, value} as its result.
 
 ---
 
@@ -499,13 +499,21 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
 ## Links
 
 
-#### Floki - https://github.com/philss/floki/blob/master/lib/floki.ex
+#### Floki
 
-#### Ecto.Multi - https://hexdocs.pm/ecto/Ecto.Multi.html
+##### https://github.com/philss/floki/blob/master/lib/floki.ex
 
-#### Stripity Stripe - https://hexdocs.pm/stripity_stripe/2.0.0-alpha.10
+#### Ecto.Multi
 
-#### Ticket to Fly - https://gitpitch.com/cathyzoller/ticket_to_fly
+##### https://hexdocs.pm/ecto/Ecto.Multi.html
+
+#### Stripity Stripe
+
+##### https://hexdocs.pm/stripity_stripe/2.0.0-alpha.10
+
+#### Ticket to Fly
+
+##### https://gitpitch.com/cathyzoller/ticket_to_fly
 
 ---
 
