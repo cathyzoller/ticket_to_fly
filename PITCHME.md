@@ -40,7 +40,7 @@ Note: From here, you can iterate over the map of files for processing or saving,
 
 ---
 
-![fido-sweater](assets/fido-sweater.jpg)
+<img src="assets/fido-sweater.jpg" width="75%" height="75%" />
 
 ---
 
