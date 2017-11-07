@@ -108,9 +108,7 @@ parameters: %{
 }
 ```
 
-@[1-15]
 @[8-12]
-
 
 
 Note: Plug.Upload  Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
@@ -125,19 +123,20 @@ Note: Plug.Upload  Genserver process saves upload struct to a temp directory. Af
 
 ```elixir
 
-case Repo.insert(changeset) do
+  case Repo.insert(changeset) do
 
-  {:ok, pattern} ->
-    template = Repo.get!(
-      Template, pattern_params["template_id"])
+    {:ok, pattern} ->
+      template = Repo.get!(
+        Template, pattern_params["template_id"])
 
-    path = "priv/static/images/templates/#{template.id}"
+      path = "priv/static/images/templates/#{template.id}"
 
-    PatternImage.store({path, pattern})
+      PatternImage.store({path, pattern})
 
-    pattern_img_param = %{
-      pattern_image_url: "../patterns/#{pattern.id}"}
-    |> update_pattern
+      pattern_img_param =
+        %{pattern_image_url:
+          "priv/static/images/patterns/#{pattern.id}"}
+      |> update_pattern
   end
 
 ```
@@ -148,7 +147,7 @@ case Repo.insert(changeset) do
 
 @[4-9]
 
-@[1-14]
+@[1-15]
 
 ### An Example
 
@@ -247,11 +246,7 @@ export const updatePhoto = (id) => (
 
     httpPostForm(`/api/v1/designs/${id}`, form_data)
     .then((resp) => {
-      .
-      .
 ```
-
-@[1-15]
 
 @[3]
 
