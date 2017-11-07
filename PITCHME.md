@@ -115,10 +115,13 @@ Note: Plug.Upload  Genserver process saves upload struct to a temp directory. Af
 
 ---
 
+### Programatically Insert Images
+
+---
+
 <img src="assets/small-dog-template.jpg" width="50%" height="50%" />
 
-#### Programatically Insert Images
-
+#### Clone Template
 ---
 
 ```elixir
@@ -149,7 +152,7 @@ Note: Plug.Upload  Genserver process saves upload struct to a temp directory. Af
 
 @[1-15]
 
-### An Example
+### Store After Create
 
 Note: Explain Background - User form for other info -> onCreate, get image associated with parent
 
@@ -157,17 +160,17 @@ Note: Explain Background - User form for other info -> onCreate, get image assoc
 
 ## Amazon S3
 
-## With Arc
+Note: templates are assets -> move user copies to s3
+
+---
+
+### With Arc
 
 #### https://github.com/stavro/arc
 
 ---
 
-## Amazon S3 Without Arc
-
----
-
-### Elixir apps
+### Or Without Arc (Elixir)
 
 * :ex_aws & :ex_aws_s3 packages
 * Create a Module
@@ -175,23 +178,20 @@ Note: Explain Background - User form for other info -> onCreate, get image assoc
 
 #### https://github.com/ex-aws/ex_aws
 
-Note: use mix task to move images onto s3 when ready...
+Note: use mix task to move images onto s3 when ready...lead in to API
 
 ---
 
 # B is for Backend
 
----
-
-## Phoenix as an API
-
-### Receives Image Data from a Client Application
+### Phoenix/Elixir API
 
 
 Note: often no need to use binary data (rails... used binary data) but Arc supports it
 
 
 ---
+
 
 ```javascript
 
@@ -258,7 +258,10 @@ export const updatePhoto = (id) => (
 
 ### Update Action
 
-Note: FormData objects require a POST request
+Note: Redux
+---
+
+### Endpoint Receives Image Data from a Client Application
 
 ---
 
@@ -268,6 +271,9 @@ Note: FormData objects require a POST request
 
 * resources "/designs", DesignController, except: [:new, :edit]
 * post "/designs/:id", DesignController, :update
+
+
+Note: FormData objects require a POST request
 
 ---
 
@@ -363,8 +369,8 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 
       File.open(file_path,'w') {|f| doc.write_xml_to f}
     end
+  end
 ```
-@[1-14]
 
 @[7]
 
@@ -372,7 +378,9 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 
 @[13]
 
-Note:  get the file path, then set the
+@[1-14]
+
+Note:  get the file path, then set the css then write to the file
 
 ---
 #### Using Floki with Phoenix
@@ -440,9 +448,9 @@ Note: only addressing Ecto.Multi here (atomically apply several functions).  Loc
 
 ```
 
-@[1-16]
-
 @[1-3, 11-16]
+
+@[1-16]
 
 Note: Ecto.Multi is a data structure for grouping multiple Repo operations. functions include "insert", "update" & delete in addition to 'run'.  Changesets checked for these.  This is very useful when an operation depends on the value of a previous operation. For this reason, the function given as callback to run/3 and run/5 will receive all changes performed by the multi so far as a map in the first argument.  The function given to run must return {:ok, value} or {:error, value} as its result.
 
@@ -469,7 +477,6 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
 ---
 
 ```elixir
-
   defp check_treats(treats_array) do
     _check_treats(treats_array, %{total_count: 0, types: [])
   end
@@ -488,6 +495,16 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
     %{count: treat.count, name: treat.name}
   end
 ```
+
+@[1-3]
+
+@[5]
+
+@[6-13]
+
+@[1-17]
+
+Note: Linked List data structure, in place of iteration over while loops in Ruby.
 
 ---
 
