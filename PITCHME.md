@@ -574,6 +574,10 @@ Note: Linked List data structure, in place of iteration over while loops in Ruby
 
 ---
 
+<img src="assets/dog-sign-thanks.jpg" />
+
+___
+
 ## Links
 
 ---
@@ -606,10 +610,3 @@ Note: Linked List data structure, in place of iteration over while loops in Ruby
 #### https://www.freepik.com/free-photos-vectors/dog
 
 #### http://moderndogmagazine.com/articles/dog-sweaters-so-cute-youll-want-wear-them/91180
-
-
-
-
-
-
-
