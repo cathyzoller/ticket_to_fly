@@ -402,28 +402,94 @@ Note: (tree, element, attribute, mutation function)
 
 ## The Pipe Operator
 
----?image=assets/pipe.jpg
+---
+<img src="assets/pipe.jpg" width="75%" />
 
 ---
 
-### Rails vs Phoenix
+### Ruby or Javascript
+
+#### Conditionals
 
 ---
 
-#### Rails
-
-* conditionals
-* ActiveRecord::Base.transaction
-
-#### Phoenix/Elixir
-
-* pattern matching
-* guard clauses
-* Ecto Multi
-
-Note: only addressing Ecto.Multi here (atomically apply several functions).  Locking omitted but may pass with query params in Ecto.
+```Ruby
+def complete_purchase(purchase, is_birthday, coupon)
+  if present?(coupon)
+    apply_discount(purchase, coupon)
+  elsif is_birthday
+    if purchase > 2000
+      send_big_treat
+    else
+      send_little_treat
+    end
+  else
+    say_thank_you
+  end
+end
+```
 
 ---
+
+### Elixir
+
+#### Guard clauses
+
+---
+
+```elixir
+def complete_purchase(purchase, is_birthday, coupon) when is_nil(coupon) do
+  case is_birthday do
+    true -> send_treat(purchase)
+    _ -> say_thank_you
+  end
+end
+def complete_purchase(purchase, is_birthday, coupon) do
+  apply_discount(purchase, coupon)
+end
+
+defp send_treat(purchase) when purchase > 20, do: send_big_treat
+defp send_treat(purchase), do: send_little_treat
+
+```
+
+---
+
+#### Refactor with Pipe operator
+
+```elixir
+def complete_purchase(purchase, is_birthday, coupon) do
+  apply_coupon(coupon)
+  |> check_birthday(is_birthday)
+  |> send_treat(purchase)
+end
+
+defp apply_coupon(coupon) when is_nil(coupon), do: {:continue, "no coupon"}
+defp apply_coupon(coupon) do
+  calculate_discount
+  # => {:stop, "discount applied"} OR {:stop, "error occurred"}
+end
+
+defp check_birthday({:stop, reason}, is_birthday), do: {:stop, reason}
+defp check_birthday({:continue, reason}, is_birthday) when !is_birthday do
+  say_thank_you
+  {:stop, "no birthday"}
+end
+defp check_birthday({:continue, reason}, is_birthday) do
+  {:continue, "has birthday"}
+end
+
+defp send_treat({:stop, reason}, purchase), do: {:stop, reason}
+defp send_treat({:continue, reason}, purchase) when purchase > 2000, do: send_big_treat
+defp send_treat({:continue, reason}, purchase), do: send_little_treat
+defp send_treat(_, _), do: {:error, "Hmmmm....."}
+```
+
+Note: Another use for pipes next
+
+---
+
+#### Using Pipes with
 
 ### Ecto Multi
 
