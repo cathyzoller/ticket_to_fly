@@ -572,9 +572,11 @@ Note:  The multi map is an accumulator ... which brings us to our last topic:  R
 
 Note: Linked List data structure, in place of iteration over while loops in Ruby.
 
----?image=assets/dog-sign-thanks.jpg
+---
 
-___
+<img src="assets/dog-sign-thanks.jpg" width="75%" />
+
+---
 
 ## Links
 
