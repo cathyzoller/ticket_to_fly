@@ -380,20 +380,20 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 Note:  get the file path, then set the css then write to the file
 
 ---
-#### Using Floki with Phoenix
+### Using Floki with Phoenix
 
 ```elixir
-@doc """
-  Changes the attribute values of the elements matched
-  by `selector` with the function `mutation` and returns
-  the whole element tree
+
+  # get file then
 
   svg
   |> Floki.attr("path", "d", fn_ ->  params["svg_d_attr"]) end)
 
 ```
 
-Note: (tree, element, attribute, mutation function)
+#### args: (tree, element, selector, mutation function)
+
+Note: Changes the attribute values of the elements matched by `selector` with the function `mutation` and returns the whole element tree
 
 ---
 
@@ -425,11 +425,11 @@ def complete_purchase(purchase, is_birthday, coupon)
   end
 end
 ```
-@[2-3]
+@[1-3]
 
-@[4-10]
+@[4-9]
 
-@[1, 3, 11-13]
+@[2, 4, 10-12]
 
 ---
 
