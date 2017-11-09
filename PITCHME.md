@@ -125,7 +125,6 @@ Note: Plug.Upload  Genserver process saves upload struct to a temp directory. Af
 ---
 
 ```elixir
-
   case Repo.insert(changeset) do
 
     {:ok, pattern} ->
@@ -141,7 +140,6 @@ Note: Plug.Upload  Genserver process saves upload struct to a temp directory. Af
           "priv/static/images/patterns/#{pattern.id}"}
       |> update_pattern
   end
-
 ```
 
 @[1-3]
