@@ -415,7 +415,7 @@ Note: (tree, element, attribute, mutation function)
 
 ```Ruby
 def complete_purchase(purchase, is_birthday, coupon)
-  if present?(coupon)
+  if !nil?(coupon)
     apply_discount(purchase, coupon)
   elsif is_birthday
     if purchase > 2000
@@ -456,7 +456,7 @@ defp send_treat(purchase), do: send_little_treat
 
 @[1-6]
 
-@[7-9]
+@[2-5, 7-9]
 
 @[11-12]
 
