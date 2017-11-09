@@ -452,6 +452,13 @@ defp send_treat(purchase) when purchase > 20, do: send_big_treat
 defp send_treat(purchase), do: send_little_treat
 
 ```
+@[1]
+
+@[1-6]
+
+@[7-9]
+
+Note: one way of writing with elixir
 
 ---
 
@@ -484,6 +491,14 @@ defp send_treat({:continue, reason}, purchase) when purchase > 2000, do: send_bi
 defp send_treat({:continue, reason}, purchase), do: send_little_treat
 defp send_treat(_, _), do: {:error, "Hmmmm....."}
 ```
+
+@[1-5]
+
+@[7-11]
+
+@[13-20]
+
+@[21-24]
 
 Note: Another use for pipes next
 
@@ -526,14 +541,21 @@ Note: Ecto.Multi is a data structure for grouping multiple Repo operations. func
 
 ```elixir
     charge = Repo.transaction(
-      PaymentService.manage_stripe_charge(user, design_id, design_name, token, retail)
+      PaymentService.manage_stripe_charge(
+        user, design_id, design_name, token, retail)
     )
 ```
 
-#### Returns
+---
 
-* {:ok, %{return_values}}
-* {:error, failed_operation, failed_value, changes_so_far}
+### Returns
+
+<p> {:ok, %{return_values}}
+  <br />
+  OR
+  <br />
+  {:error, failed_operation, failed_value, changes_so_far}
+</p>
 
 Note:  The multi map is an accumulator ... which brings us to our last topic:  Recursion
 
