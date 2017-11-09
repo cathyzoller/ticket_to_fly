@@ -194,7 +194,6 @@ Note: often no need to use binary data (rails... used binary data) but Arc suppo
 
 
 ```javascript
-
 handleImageChange(e) {
   e.preventDefault();
 
@@ -217,13 +216,13 @@ handlePhotoUpdate() {
 }
 ```
 
-@[1-4]
+@[1-5]
 
-@[6-11]
+@[7-12]
 
-@[5, 10]
+@[16-19]
 
-@[1-16]
+@[1-19]
 
 ### React Form Component
 
