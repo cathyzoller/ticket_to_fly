@@ -452,11 +452,13 @@ defp send_treat(purchase) when purchase > 20, do: send_big_treat
 defp send_treat(purchase), do: send_little_treat
 
 ```
-@[1]
+@[1, 6]
 
 @[1-6]
 
 @[7-9]
+
+@[11-12]
 
 Note: one way of writing with elixir
 
