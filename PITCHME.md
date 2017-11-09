@@ -230,7 +230,6 @@ handlePhotoUpdate() {
 ---
 
 ```javascript
-
 export const updatePhoto = (id) => (
   (dispatch, getState) => {
     const { formData } = getState().designs;
@@ -315,7 +314,6 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 ---
 
 ```xml
-
 <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
  <g>
   <title>Layer 1</title>
@@ -428,6 +426,11 @@ def complete_purchase(purchase, is_birthday, coupon)
   end
 end
 ```
+@[2-3]
+
+@[4-10]
+
+@[1, 3, 11-13]
 
 ---
 
