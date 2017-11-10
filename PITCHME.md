@@ -403,6 +403,8 @@ Note: Changes the attribute values of the elements matched by `selector` with th
 
 ## The Pipe Operator
 
+## |>
+
 ---
 <img src="assets/pipe.jpg" width="75%" />
 
