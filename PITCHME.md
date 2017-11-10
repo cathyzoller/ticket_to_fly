@@ -42,6 +42,39 @@ Note: From here, you can iterate over the map of files for processing or saving,
 
 <img src="assets/fido-sweater.jpg" width="600px" />
 
+Note: Imagine you're developing an app which requires image uploads.  In this case the user wants to upload a design for a dog sweater.
+
+---
+
+## Plug.Upload Struct
+
+### within changeset function params
+
+---
+
+```elixir
+#[debug] Processing by Knitwhiz.DesignController.update/2
+
+parameters: %{
+  "id" => "6",
+  "design" => %{
+    "description" => "doggie sweater",
+    "name" => "Fido's Sweater",
+    "photo" => %Plug.Upload{
+      content_type: "image/png",
+      filename: "fidos-sweater.png",
+      path: "/var/folders/2s/fs..66/T//plug-1493/multipart-53892"
+    },
+    "supplies" => "yarn"
+  }
+}
+```
+
+@[8-12]
+
+
+Note: Plug.Upload  Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
+
 ---
 
 ```elixir
@@ -81,37 +114,6 @@ Note: Scope.id not available on create.
 ### Workaround
 
 #### Use separate changesets for create and update
-
----
-
-## Plug.Upload Struct
-
-### within changeset function params
-
----
-
-```elixir
-#[debug] Processing by Knitwhiz.DesignController.update/2
-
-parameters: %{
-  "id" => "6",
-  "design" => %{
-    "description" => "doggie sweater",
-    "name" => "Fido's Sweater",
-    "photo" => %Plug.Upload{
-      content_type: "image/png",
-      filename: "fidos-sweater.png",
-      path: "/var/folders/2s/fs..66/T//plug-1493/multipart-53892"
-    },
-    "supplies" => "yarn"
-  }
-}
-```
-
-@[8-12]
-
-
-Note: Plug.Upload  Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
 
 ---
 
