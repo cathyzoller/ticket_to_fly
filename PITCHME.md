@@ -1,10 +1,8 @@
 ---?image=assets/bg1.jpeg
 
-Note: How many of you have worked with Rails? In this presentation I’m focusing on a some practical differences I found when porting a project from Rails to Phoenix… i.e. an object-oriented approach vs a functional one. (slide)
-
 ---?image=assets/bg2.jpeg
 
-Note: How many of you are just beginning with Elixir/Phoenix?  1.2/1.3?  (slide)
+Note: How many of you have worked with Rails? In this presentation I’m focusing on a some practical differences I found when porting a project from Rails to Phoenix… i.e. an object-oriented approach vs a functional one. (slide)How many of you are just beginning with Elixir/Phoenix?  1.2/1.3?  (slide)
 
 ---?image=assets/bg3.jpeg
 
