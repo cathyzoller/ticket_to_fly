@@ -4,20 +4,20 @@ Note: How many of you have worked with Rails? In this presentation I’m focusin
 
 ---?image=assets/bg2.jpeg
 
-How many of you are just beginning with Elixir/Phoenix?  1.2/1.3?  (slide)
+Note: How many of you are just beginning with Elixir/Phoenix?  1.2/1.3?  (slide)
 
 ---?image=assets/bg3.jpeg
 
-Note: This is practical - Compare/Contrast (mostly contrast) with rails counterparts.
+Note: Today I’ll be talking about  images, pipes and recursion - comparing and contrasting tools (and mindset) used when developing in elixir.  Although I'm using Phoenix in this project, most of what I'll be saying is not specific to the platform. (slide)
 
 
 ---?image=assets/bg4.jpeg
 
-Note: Let' start with images...
+Note: Beginning with images...which is an issue most of us deal with in many applications.(slide)
 
 ---?image=assets/bg5.jpeg
 
-Note: Create thumbnails, resize etc. as with Paperclip or Carrierwave in Rails
+Note: The primary package used for uploading images is Arc. As with Paperclip or Carrierwave ruby gems with Arc you may Create thumbnails, resize or otherwise process images. Takes advantage of the Plug.Upload struct & I'll go into more detail about that later.  Once uploaded, the return is a standard tuple. You may also use Arc to process multiple images.  (slide)
 
 ---?image=assets/bg6.jpeg
 
