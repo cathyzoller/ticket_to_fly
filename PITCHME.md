@@ -462,11 +462,9 @@ defp send_treat(purchase), do: send_little_treat
 ```
 @[1, 6]
 
-@[1-6]
+@[1-6, 11-12]
 
 @[2-5, 7-9]
-
-@[11-12]
 
 Note: one way of writing with elixir
 
@@ -510,7 +508,7 @@ defp send_treat(_, _), do: {:error, "Hmmmm....."}
 
 @[21-25]
 
-Note: Another use for pipes next
+Note: Refactor using pattern matching as well...Another use for pipes next
 
 ---
 
