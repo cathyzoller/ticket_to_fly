@@ -115,9 +115,13 @@ Note: Scope.id not available on create.
 
 #### Use separate changesets for create and update
 
+Note: and then in the controller once the record is created, use the update changeset to attach the file.
+
 ---
 
 ### Programatically Insert Images
+
+Note: Our user has now uploaded an image.  But now we need to find a suitable template and copy it. You'll see why later.
 
 ---
 
