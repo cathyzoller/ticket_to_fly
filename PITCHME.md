@@ -2,78 +2,19 @@
 
 ---?image=assets/bg2.jpeg
 
-Note: How many of you have worked with Rails? In this presentation I’m focusing on a some practical differences I found when porting a project from Rails to Phoenix… i.e. an object-oriented approach vs a functional one. (slide)How many of you are just beginning with Elixir/Phoenix?  1.2/1.3?  (slide)
+Note: Over the past year and a half I've been working on a re-write of an application called Knitwiz - that allows users to design sweaters and auto generate the instructions using any pattern stitch plus their measurements.  Originally written in rails with a fair amount of jquery, the stack is now comprised of a phoenix api along with a client-side React app. It launched about a month ago, & is currently in beta - so if any of you would like to knit a sweater let me know after.  Right now though I'd like to talk a bit about three  "tools" (for lack of a better word) I found indispensible for this project, and my gradual  shift in thinking as I moved from Ruby to Elixir.  i.e. moving from an object-oriented approach to a functional one. (slide) How many of you are just beginning with Elixir/Phoenix?  Use as an api? Use React? (slide)
 
 ---?image=assets/bg3.jpeg
 
-Note: Today I’ll be talking about  images, pipes and recursion - comparing and contrasting tools (and mindset) used when developing in elixir.  Although I'm using Phoenix in this project, most of what I'll be saying is not specific to the platform. (slide)
-
-
----?image=assets/bg4.jpeg
-
-Note: Beginning with images...which is an issue most of us deal with in many applications.(slide)
+Note: The three tools are Images, Ecto.Multi and Recursion.  By the way, I'm using Phoenix in this project, but much of what I'll be saying is not specific to the phoenix platform. (slide)
 
 ---?image=assets/bg5.jpeg
 
-Note: The primary package used for uploading images is Arc. As with Paperclip or Carrierwave ruby gems with Arc you may Create thumbnails, resize or otherwise process images. Takes advantage of the Plug.Upload struct & I'll go into more detail about that later.  Once uploaded, the return is a standard tuple. You may also use Arc to process multiple images.  (slide)
+Note: The primary hex package used for uploading images is Arc. As with the ruby gems Paperclip or Carrierwave, Arc works with imagemagick for thumbnail creation or other processing.  And that's about where the similarity ends.  Arc takes advantage of the Plug.Upload struct - more detail about that later. Once uploaded, the return is a standard tuple. (slide)
 
 ---?image=assets/bg6.jpeg
 
-Note: Local store (as opposed to cdn), use Arc Ecto to integrate the two. Going over the highlights here.
-
----
-
-## Multiple Images
-
-```elixir
-    <%= file_input @form, :image_uploads,
-
-      class: "validate",
-
-      multiple: true,
-
-      name: "user[image_upload][]" %>
-```
-
-Note: From here, you can iterate over the map of files for processing or saving, either as embeds array, or association.
-
-
----
-
-<img src="assets/fido-sweater.jpg" width="600px" />
-
-Note: Imagine you're developing an app which requires image uploads.  In this case the user wants to upload a design for a dog sweater.
-
----
-
-## Plug.Upload Struct
-
-### within changeset function params
-
----
-
-```elixir
-#[debug] Processing by Knitwhiz.DesignController.update/2
-
-parameters: %{
-  "id" => "6",
-  "design" => %{
-    "description" => "doggie sweater",
-    "name" => "Fido's Sweater",
-    "photo" => %Plug.Upload{
-      content_type: "image/png",
-      filename: "fidos-sweater.png",
-      path: "/var/folders/2s/fs..66/T//plug-1493/multipart-53892"
-    },
-    "supplies" => "yarn"
-  }
-}
-```
-
-@[8-12]
-
-
-Note: Plug.Upload  Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
+Note: In order to scope to a record, you'll also need Arc_Ecto, which provides a cast_attachment function
 
 ---
 
@@ -93,109 +34,32 @@ end
 
 ---
 
-## Image Gotcha
-
-### No Record ID on Create
+### Uploader
 
 ```elixir
+# uploaders/photo
+def acl(:original, _), do: :public_read
 
-# uploaders/avatar
 def storage_dir(_, {_, scope}) do
-
-   "priv/static/images/user/#{scope.id}"
-
+   "uploads/design/#{scope.id}"
 end
 ```
 
-Note: Scope.id not available on create.
+@[4-6]
+@[5]
+@[2]
+
+Note: couple of gotchas: (slide) First, scope.id not available on create. Workaround - create then update &/or use different changeset functions. (slide) Secondly, for public display of images hosted on AWS S3 add a public read acl.  Overall I thought it was much easier to push images up to s3 and recall them, than any process I've used before.  What's the process look like?
 
 ---
 
-### Workaround
+<img src="assets/fido-sweater.jpg" width="600px" />
 
-#### Use separate changesets for create and update
-
-Note: and then in the controller once the record is created, use the update changeset to attach the file.
-
----
-
-### Programatically Insert Images
-
-Note: Our user has now uploaded an image.  But now we need to find a suitable template and copy it. You'll see why later.
-
----
-
-<img src="assets/small-dog-template.jpg" width="50%" height="50%" />
-
-#### Clone Template
----
-
-```elixir
-  case Repo.insert(changeset) do
-
-    {:ok, pattern} ->
-      template = Repo.get!(
-        Template, pattern_params["template_id"])
-
-      path = "priv/static/images/templates/#{template.id}"
-
-      PatternImage.store({path, pattern})
-
-      pattern_img_param =
-        %{pattern_image_url:
-          "priv/static/images/patterns/#{pattern.id}"}
-      |> update_pattern
-  end
-```
-
-@[1-3]
-
-@[4-5]
-
-@[4-9]
-
-@[1-15]
-
-### Store After Create
-
-Note: Explain Background - User form for other info -> onCreate, get image associated with parent
-
----
-
-## Amazon S3
-
-Note: templates are assets -> move user copies to s3
-
----
-
-### With Arc
-
-#### https://github.com/stavro/arc
-
----
-
-### Or Without Arc (Elixir)
-
-* :ex_aws & :ex_aws_s3 packages
-* Create a Module
-* Follow the README
-
-#### https://github.com/ex-aws/ex_aws
-
-Note: use mix task to move images onto s3 when ready...lead in to API
-
----
-
-# B is for Backend
-
-### Phoenix/Elixir API
-
-
-Note: often no need to use binary data (rails... used binary data) but Arc supports it
+Note: Working from frontend to backend, the process is as follows: the user wants to upload a design for a dog sweater.
 
 
 ---
-
+### React Form Component
 
 ```javascript
 handleImageChange(e) {
@@ -226,9 +90,7 @@ handlePhotoUpdate() {
 
 @[16-19]
 
-@[1-19]
-
-### React Form Component
+Note: Javascript looks like this (slide) Using the FileReader construct makes the frontend image manipulation pretty straightforward.  (slide) Calling a function which calls the Phoenix endpoint
 
 ---
 
@@ -250,17 +112,15 @@ export const updatePhoto = (id) => (
     .then((resp) => {
 ```
 
-@[3]
-
 @[4]
 
 @[6-12]
 
 @[14]
 
-### Update Action
 
-Note: Redux
+Note: We're using javascript's FormData, (slide) appending the data we want to send to the backend. (slide).  httpPostForm is just a utility function calls fetch with a POST method
+
 ---
 
 ### Endpoint Receives Image Data from a Client Application
@@ -279,40 +139,58 @@ Note: FormData objects require a POST request
 
 ---
 
-# C is for Copy
+### DesignController update action
 
 ---
 
+```elixir
+#[debug] Processing by Knitwiz.DesignController.update/2
+
+parameters: %{
+  "id" => "6",
+  "design" => %{
+    "description" => "doggie sweater",
+    "name" => "Fido's Sweater",
+    "photo" => %Plug.Upload{
+      content_type: "image/png",
+      filename: "fidos-sweater.png",
+      path: "/var/folders/2s/fs..66/T//plug-1493/multipart-53892"
+    },
+    "supplies" => "yarn"
+  }
+}
+```
+
+@[8-12]
+
+Note: controller has access to Plug.Upload where a Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
+
+---
+
+### SVG file manipulation
+
 <img src="assets/small-dog-template.jpg" width="50%" height="50%" />
 
-### Copy inside a Mix Task
 
-#### Using File Module
-
-Note: suppose admin, not using Arc, etc. & want to copy a template to further manipulate.
+Note: original dog sweater template is copied inside s3 & pulled down to manipulate inside to further manipulate.(slide)
 
 ---
 
 #### Elixir
 
 ```elixir
-cp(source, destination, callback \\ fn _, _ -> true end)
+File.cp(source, destination, callback \\ fn _, _ -> true end)
 # => {:ok} OR {:error, :reason}
 ```
 #### OR Erlang
 
 ```elixir
 
-copy(source, destination, bytes_count \\ :infinity)
+:file.copy(source, destination, bytes_count \\ :infinity)
 # => {:ok, :bytes_copied} OR {:error, :reason}
 ```
-Note:  copy without using Arc Storage, or copy from S3 for example...
+Note: To digress for a moment, you may also copy files using the File module
 
----
-
-<img src="assets/small-dog.jpg" width="50%" height="50%" />
-
-### User manipulation of SVG file
 
 ---
 
@@ -335,16 +213,21 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
     fill="#ff56ff" />
  </g>
 </svg>
-
 ```
 
+@[7-11]
+
 #### Dog Sweater Template SVG
+
+Note: Here's the xml which represents the template.  Changing the path argument "d" will change the shape.
 
 ---
 
 <img src="assets/big-dog-1.jpg" width="50%" height="50%" />
 
-### Using D3 or similar library
+### Using d3 or similar library
+
+Note: Once the template is overlayed onto a model, it can be manipulated with d3 or fabric.js (although fabric.js doesn't have react syntax baked in, it wasn't difficult to refactor)(slide)
 
 ---
 <img src="assets/big-dog-2.jpg" width="50%" height="50%" />
@@ -381,32 +264,66 @@ Note:  copy without using Arc Storage, or copy from S3 for example...
 
 @[1-14]
 
-Note:  get the file path, then set the css then write to the file
+Note:  get the file path (next), then set the css(next) then write to the file(next) - took a little over 2 seconds so make sure you have a loading spinner!
 
 ---
-### Using Floki with Phoenix
 
 ```elixir
+  %HTTPoison.Response{body: body, status_code: status_code} = HTTPoison.get!(file_path)
 
-  # get file then
+  case status_code do
+    200 ->
+      tmp_path = "tmp/#{pattern_piece.id}/#{pattern_piece.pattern_name}.svg"
+      File.mkdir("tmp/#{pattern_piece.id}")
+      File.write!(tmp_path, body)
 
-  svg
-  |> Floki.attr("path", "d", fn_ ->  params["svg_d_attr"]) end)
+      case PatternPiece.transform_path(tmp_path, params["path"]) do
+        {:ok, _} ->
+          PatternImage.store({tmp_path, pattern_piece})
 
+          %{status: 201, msg: "success"}
+        {:error, _} ->
+          %{status: 422, msg: "error in transform"}
+      end
+    _ ->
+      %{status: 422, msg: "file not found"}
+  end
 ```
 
-#### args: (tree, element, selector, mutation function)
+@[1]
+@[3-7]
+@[9-11]
 
-Note: Changes the attribute values of the elements matched by `selector` with the function `mutation` and returns the whole element tree
+Note: s3 will return something whether or not the file exists(next). Switch on the status_code (next) & if a 200 response then write the file to a temporary directory, prior to transforming. (next).  If the transformation is successful, then replace the version on s3 with this one.  (slide)
+
+---
+
+## Floki
+
+```elixir
+def transform_path(svg_url, new_path) do
+  File.open(svg_url, [:read, :write], fn(file) ->
+    svg = IO.read(file, :all)
+    |> Floki.attr("path", "d", fn _ ->  new_path end)
+    |> prepend_xml
+    |> Floki.raw_html
+
+    File.write(svg_url, svg)
+  end)
+end
+
+defp prepend_xml(list), do: [{:pi, "xml", [{"version", "1.0"}]} | list]
+```
+
+#### Floki.attr(tree, element, selector, mutation function)
+
+Note: For the actual transformation we can use Floki.attr method. Floki works by creating a list of the xml or html elements. The attr function changes the attribute values of the elements matched by `selector` with the function `mutation` and returns the whole element tree.  Using elixir speeds the process up to 100 to 200 ms, and about 55 ms without latency. So even complex image manipulation is straightforward to implement and 10 times more performant.  Next up, ecto multi.
 
 ---
 
-## The Pipe Operator
+## Ecto.Multi transactions
 
-## |>
-
----
-<img src="assets/pipe.jpg" width="75%" />
+#### transactions with pipes
 
 ---
 
@@ -511,7 +428,6 @@ Note: Refactor using pattern matching as well...Another use for pipes next
 
 ---
 
-#### Using Pipes with
 
 ### Ecto Multi
 
@@ -521,7 +437,7 @@ Note: Refactor using pattern matching as well...Another use for pipes next
     |> Multi.run(:retrieve_customer, &retrieve_customer(&1, user.stripe_id, token))
     |> Multi.run(:update_user, &update_user(&1.retrieve_customer, user))
     |> Multi.run(:stripe_charge, &stripe_charge(&1.retrieve_customer, amount))
-    |> Multi.run(:insert_project, &insert_order(&1.stripe_charge, user.id, design_id))
+    |> Multi.run(:insert_order, &insert_order(&1.stripe_charge, user.id, design_id))
     |> Multi.run(:insert_charge, &insert_charge(&1.insert_order))
     |> Multi.run(:send_dog_treat, &send_dog_treat(user))
   end
@@ -564,16 +480,17 @@ Note: Ecto.Multi is a data structure for grouping multiple Repo operations. func
   {:error, failed_operation, failed_value, changes_so_far}
 </p>
 
-Note:  The multi map is an accumulator ... which brings us to our last topic:  Recursion
+Note:  The multi map is an accumulator ... which brings us to our final topic:  Recursion
 
 ---
 ## Recursion
 
+#### the best thing since fritos
 ---
 
 ```elixir
-  defp check_treats(treats_array) do
-    _check_treats(treats_array, %{total_count: 0, types: [])
+  defp check_treats(treats_list) do
+    _check_treats(treats_list, %{total_count: 0, types: []})
   end
 
   defp _check_treats([], info_map), do: info_map
