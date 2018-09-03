@@ -19,6 +19,11 @@
   letter-spacing: 0.05em;
 }
 
+.reveal pre code {
+  font-size: 1.3em;
+  line-height: 1.2;
+}
+
 .hljs {
   background: transparent;
 }
