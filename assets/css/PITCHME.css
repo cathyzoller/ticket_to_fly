@@ -24,6 +24,11 @@
   line-height: 1.2;
 }
 
+.reveal pre {
+  width: 120%;
+  margin-left: -10%;
+}
+
 .hljs {
   background: transparent;
 }
