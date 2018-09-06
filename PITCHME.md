@@ -1,20 +1,26 @@
 ---?image=assets/bg1.jpeg
 
+Note: Over the past year and a half I've been working on a re-write of a side project located at KnitWiz.com, an application allowing hand-knitters to design sweaters and auto generate instructions using their measurements and any pattern stitch or yarn they desire.  It launched about a month ago, & is being beta tested right now by a group of dedicated early adopters. Originially I wrote the app using ruby on rails, and a lot of jquery... it chugged along(next slide)
+
 ---?image=assets/bg2.jpeg
 
-Note: Over the past year and a half I've been working on a re-write of an application called Knitwiz - that allows users to design sweaters and auto generate the instructions using any pattern stitch plus their measurements.  Originally written in rails with a fair amount of jquery, the stack is now comprised of a phoenix api along with a client-side React app. It launched about a month ago, & is currently in beta - so if any of you would like to knit a sweater let me know after.  Right now though I'd like to talk a bit about three  "tools" (for lack of a better word) I found indispensible for this project, and my gradual  shift in thinking as I moved from Ruby to Elixir.  i.e. moving from an object-oriented approach to a functional one. (slide) How many of you are just beginning with Elixir/Phoenix?  Use as an api? Use React? (slide)
+Note: Today it flies with phoenix as an api and a React front-end. I'd like to talk about three  stops along my personal camino to an mvp and the gradual shift in my thinking along the way, going from an object-oriented approach to a functional one. (next slide)
 
 ---?image=assets/bg3.jpeg
 
-Note: The three tools are Images, Ecto.Multi and Recursion.  By the way, I'm using Phoenix in this project, but much of what I'll be saying is not specific to the phoenix platform. (slide)
+Note: File Uploads, Ecto.Multi and Recursion. BTW How many of you are just beginning with Elixir/Phoenix?  Use as an api? Use React? How many of you knit (next slide)
+
+---?image=assets/bg4.jpeg
+
+Note: First stop -> File uploads
 
 ---?image=assets/bg5.jpeg
 
-Note: The primary hex package used for uploading images is Arc. As with the ruby gems Paperclip or Carrierwave, Arc works with imagemagick for thumbnail creation or other processing.  And that's about where the similarity ends.  Arc takes advantage of the Plug.Upload struct - more detail about that later. Once uploaded, the return is a standard tuple. (slide)
+Note: Arc is the primary hex package used for file uploads. As with ruby gems Paperclip or Carrierwave, Arc works with imagemagick for thumbnail creation or other processing.  And that's about where the similarity ends.  Arc takes advantage of the Plug.Upload struct - more detail about that later. Once uploaded, the return is a standard tuple. (slide)
 
 ---?image=assets/bg6.jpeg
 
-Note: In order to scope to a record, you'll also need Arc_Ecto, which provides a cast_attachment function
+Note: Scoping uploads to a specific record requires Arc_Ecto package as well. Arc Ecto provides a cast_attachments function, to be called inside the changeset function (next slide)
 
 ---
 
@@ -28,9 +34,9 @@ def changeset(struct, params \\ %{}) do
 end
 ```
 
-@[1-3]
 @[4]
-@[1-7]
+
+Note: A typical changeset function(next slide) -> results of the cast function are piped to the cast_attachments function.
 
 ---
 
@@ -46,17 +52,22 @@ end
 ```
 
 @[4-6]
-@[5]
 @[2]
 
-Note: couple of gotchas: (slide) First, scope.id not available on create. Workaround - create then update &/or use different changeset functions. (slide) Secondly, for public display of images hosted on AWS S3 add a public read acl.  Overall I thought it was much easier to push images up to s3 and recall them, than any process I've used before.  What's the process look like?
+Note: configuration for arc uploads is at the root level inside an uploaders directory(next slide)
+In this example the path is set for AWS s3, and scoped to the design's record id.  One gotcha is that the scope.id not available on create. Workaround - create then update with a different changeset functions (slide) Another is - for public display of images hosted on AWS S3 add a public read acl. I'll go over the basic process & then delve into xml file manipulation
 
 ---
 
 <img src="assets/fido-sweater.jpg" width="600px" />
 
-Note: Working from frontend to backend, the process is as follows: the user wants to upload a design for a dog sweater.
+Note: Here's an adorable dog sweater that I might want to design
 
+---
+
+<img src="assets/small-dog-template.jpg" width="50%" height="50%" />
+
+Note: In knitwiz you'll start with an svg like this, which is an xml file.  In either case, the basic upload process is as follows.
 
 ---
 ### React Form Component
@@ -84,13 +95,9 @@ handlePhotoUpdate() {
 }
 ```
 
-@[1-5]
-
-@[7-12]
-
 @[16-19]
 
-Note: Javascript looks like this (slide) Using the FileReader construct makes the frontend image manipulation pretty straightforward.  (slide) Calling a function which calls the Phoenix endpoint
+Note: javascript's FileReader is used on the frontend to load a preview.  (next slide) Then a phoenix endpoint is called from "submitPhotoUpdate" (next slide)
 
 ---
 
@@ -112,18 +119,10 @@ export const updatePhoto = (id) => (
     .then((resp) => {
 ```
 
-@[4]
-
-@[6-12]
-
 @[14]
 
 
-Note: We're using javascript's FormData, (slide) appending the data we want to send to the backend. (slide).  httpPostForm is just a utility function calls fetch with a POST method
-
----
-
-### Endpoint Receives Image Data from a Client Application
+Note: which appends the data to form_data object (slide) and POSTS it to a phoenix endpoint via fetch.  Note that all we need to provide is the name of the file.
 
 ---
 
@@ -139,7 +138,7 @@ Note: FormData objects require a POST request
 
 ---
 
-### DesignController update action
+### Endpoint Receives Image Data from a Client Application
 
 ---
 
@@ -163,7 +162,7 @@ parameters: %{
 
 @[8-12]
 
-Note: controller has access to Plug.Upload where a Genserver process saves upload struct to a temp directory. After process dies the file moved to permanent home (either cdn or local store)
+Note: Here we see the params passed to the controller action...(next slide) controller has access to Plug.Upload uses a Genserver process to save the file to a temp directory. Once the file is uploaded to a permanent location based on Uploader configuration, the GenServer process dies and the file is. And that's all there is to it.  Overall, I found Arc faster and simpler to configure than its rails counterpart, and was very happy to leave direct client-side uploads behind. (next slide)
 
 ---
 
@@ -172,7 +171,7 @@ Note: controller has access to Plug.Upload where a Genserver process saves uploa
 <img src="assets/small-dog-template.jpg" width="50%" height="50%" />
 
 
-Note: original dog sweater template is copied inside s3 & pulled down to manipulate inside to further manipulate.(slide)
+Note: But what about file or document manipulation?  We've got this template on s3, uploaded in the usual way. original dog sweater template is copied inside s3 & pulled down to manipulate inside to further manipulate.(slide)
 
 ---
 
@@ -189,7 +188,7 @@ File.cp(source, destination, callback \\ fn _, _ -> true end)
 :file.copy(source, destination, bytes_count \\ :infinity)
 # => {:ok, :bytes_copied} OR {:error, :reason}
 ```
-Note: To digress for a moment, you may also copy files using the File module
+Note: Otherwise, When working with files on the server, copy files using the File module
 
 
 ---
@@ -219,7 +218,7 @@ Note: To digress for a moment, you may also copy files using the File module
 
 #### Dog Sweater Template SVG
 
-Note: Here's the xml which represents the template.  Changing the path argument "d" will change the shape.
+Note: Here's the xml representing the svg file.  Changing the path argument "d" will change the shape.
 
 ---
 
@@ -255,14 +254,6 @@ Note: Once the template is overlayed onto a model, it can be manipulated with d3
     end
   end
 ```
-
-@[7]
-
-@[9-11]
-
-@[13]
-
-@[1-14]
 
 Note:  get the file path (next), then set the css(next) then write to the file(next) - took a little over 2 seconds so make sure you have a loading spinner!
 
@@ -317,19 +308,15 @@ defp prepend_xml(list), do: [{:pi, "xml", [{"version", "1.0"}]} | list]
 
 #### Floki.attr(tree, element, selector, mutation function)
 
-Note: For the actual transformation we can use Floki.attr method. Floki works by creating a list of the xml or html elements. The attr function changes the attribute values of the elements matched by `selector` with the function `mutation` and returns the whole element tree.  Using elixir speeds the process up to 100 to 200 ms, and about 55 ms without latency. So even complex image manipulation is straightforward to implement and 10 times more performant.  Next up, ecto multi.
+Note: For the actual transformation we can use Floki.attr method. Floki works by creating a list of the xml or html elements. The attr function changes the attribute values of the elements matched by `selector` with the function `mutation` and returns the whole element tree.  Using elixir speeds the process up to 100 to 200 ms, and about 55 ms without latency. The takeaway here is that uploading server-side in elixir is fast enough that you don't need to do client-side uploads, unless you enjoy that pain.  Ok, so we're ready to make the sweater.  What's next?  (NEXT)
 
 ---
 
-## Ecto.Multi transactions
+## Ecto.Multi
 
-#### transactions with pipes
+#### database transaction
 
----
-
-### Ruby or Javascript
-
-#### Conditionals
+Note: GETTING PAID.  How many of you have heard of or used Ecto Multi?  Ecto.Multi groups operations to be performed as a single database transaction.  In the beginning I had a hard time understanding the syntax.  I was used to writing code like this(next slide)
 
 ---
 
@@ -348,17 +335,16 @@ def complete_purchase(purchase, is_birthday, coupon)
   end
 end
 ```
-@[1-3]
 
-@[4-9]
-
-@[2, 4, 10-12]
+Note: using nested conditionals.  here we want to send something once the purchase is completed... if there's a coupon apply a discount.  Otherwis if it's a birthday, then send either a big treat or a little treat, depending on the purchase amount.  But if neither of those conditions apply, then just say thanks.
 
 ---
 
 ### Elixir
 
 #### Guard clauses
+
+Note: I started out in elixir using a lot of guard clauses. (next slide)
 
 ---
 
@@ -369,20 +355,19 @@ def complete_purchase(purchase, is_birthday, coupon) when is_nil(coupon) do
     _ -> say_thank_you
   end
 end
-def complete_purchase(purchase, is_birthday, coupon) do
+def complete_purchase(purchase, _is_birthday, coupon) do
   apply_discount(purchase, coupon)
 end
 
 defp send_treat(purchase) when purchase > 20, do: send_big_treat
-defp send_treat(purchase), do: send_little_treat
-
+defp send_treat(_purchase), do: send_little_treat
 ```
-@[1, 6, 7-9]
+@[1, 7]
 
 @[1-6, 11-12]
 
 
-Note: one way of writing with elixir
+Note: one way of writing with elixir (next slide) using guard clauses.  (next slide) But I'm still using a case statement inside the complete_purchase function.  (next slide)
 
 ---
 
@@ -401,7 +386,7 @@ defp apply_coupon(coupon) do
   # => {:stop, "discount applied"} OR {:stop, "error occurred"}
 end
 
-defp check_birthday({:stop, reason}, is_birthday), do: {:stop, reason}
+defp check_birthday({:stop, reason}, _is_birthday), do: {:stop, reason}
 defp check_birthday({:continue, reason}, is_birthday) when !is_birthday do
   say_thank_you
   {:stop, "no birthday"}
@@ -410,9 +395,9 @@ defp check_birthday({:continue, reason}, is_birthday) do
   {:continue, "has birthday"}
 end
 
-defp send_treat({:stop, reason}, purchase), do: {:stop, reason}
+defp send_treat({:stop, reason}, _purchase), do: {:stop, reason}
 defp send_treat({:continue, reason}, purchase) when purchase > 2000, do: send_big_treat
-defp send_treat({:continue, reason}, purchase), do: send_little_treat
+defp send_treat({:continue, reason}, _purchase), do: send_little_treat
 defp send_treat(_, _), do: {:error, "Hmmmm....."}
 ```
 
@@ -424,7 +409,7 @@ defp send_treat(_, _), do: {:error, "Hmmmm....."}
 
 @[21-25]
 
-Note: Refactor using pattern matching as well...Another use for pipes next
+Note: Here's a cleaner way of writing the same feature (NEXT SLIDE)- we have one public function.  Inside the apply coupon function pipes a tuple to the check birthday, which in turn pipes a different tuple to the third function.  (NEXT) Pattern matching and guard clauses are used together to determine which clause to execute.  This is the same principal used with Ecto.Multi (NEXT)
 
 ---
 
@@ -452,22 +437,8 @@ Note: Refactor using pattern matching as well...Another use for pipes next
 
 ```
 
-@[1-3, 11-16]
+Note: Ecto Multi uses the same approach.  What it is: Ecto.Multi is a data structure for grouping multiple Repo operations. functions include "insert", "update" & delete in addition to 'run'.  The difference here is that the return of each function is added to an accumulator which is returned to the calling function - in my case it's a call to handle stripe payments from inside a controller action.  This is very useful when an operation depends on the value of a previous operation.  The function given to run must return {:ok, value} or {:error, value} as its result. (next slide)
 
-@[1-16]
-
-Note: Ecto.Multi is a data structure for grouping multiple Repo operations. functions include "insert", "update" & delete in addition to 'run'.  Changesets checked for these.  This is very useful when an operation depends on the value of a previous operation. For this reason, the function given as callback to run/3 and run/5 will receive all changes performed by the multi so far as a map in the first argument.  The function given to run must return {:ok, value} or {:error, value} as its result.
-
----
-
-### Call the function
-
-```elixir
-    charge = Repo.transaction(
-      PaymentService.manage_stripe_charge(
-        user, design_id, design_name, token, retail)
-    )
-```
 
 ---
 
@@ -477,50 +448,73 @@ Note: Ecto.Multi is a data structure for grouping multiple Repo operations. func
   <br />
   OR
   <br />
-  {:error, failed_operation, failed_value, changes_so_far}
+  {:error, failed_operation, failed_value, %{changes_so_far}}
 </p>
 
-Note:  The multi map is an accumulator ... which brings us to our final topic:  Recursion
+Note:  Notice both returns are tuples and the last value in the tuple is a map of the individual function returns.  Did I mention "accumulator"?  Essentially ecto.multi accumulates the data returned from each individual operations. which brings us to our final topic:  Recursion
 
 ---
+
 ## Recursion
 
-#### the best thing since fritos
+#### the best thing since dogs
+
+Note: I found recursion to be indispensible in order to accomplish what I wanted with knitwiz (next slide)
+
+---
+
+<img src="assets/bumble-bee.jpg" width="50%" height="50%" />
+
+Note: someone wants to design a bumblebee costume, and they add stripes. (next slide)
+
+---
+
+<img src="assets/bumble-bee-sectioned.jpg" width="50%" height="50%" />
+
+Note: but the stripes may or may not line up with the changes in shape.  I've got 5 different shapes I'm working with, but within that shape I need to consider whether or not to start the next stripe.  Not only that, I don't really know how many stripes within each shaped section.
+
 ---
 
 ```elixir
-  defp check_treats(treats_list) do
-    _check_treats(treats_list, %{total_count: 0, types: []})
+  defp shape_dog_sweater() do
+    section_one(%{stripe_index: 0, percent_worked: 0, stripe_ht: 0})
+    |> section_two
+    |> section_three
+    #  .
+    #  .
+    #  .
   end
 
-  defp _check_treats([], info_map), do: info_map
-  defp _check_treats([head | tail], info_map) do
-    treat_info = get_treat_info(head)
-
-    _check_treats(tail,
-      %{total_count: treat_info.count + info_map.total_count,
-        types: [treat_info | info_map.types]
-      })
+  defp section_one(map) do
+    check_height(map)
   end
 
-  defp get_treat_info(treat) do
-    %{count: treat.count, name: treat.name}
+  defp check_height(map) do
+    _check_height(map, map.end_height, map.stripe_ht)
+  end
+
+  defp _check_height(map, shape_ht, stripe_ht) when stripe_ht < shape_height do
+    # ... stays same color to end of shape
+  end
+  defp _check_height(map, shape_ht, stripe_ht) do
+    # some math
+    # update the map
+
+    _check_height(updated_map, new_shape_ht, stripe_ht)
   end
 ```
 
-@[1-3]
-
-@[5]
-
-@[6-13]
-
-@[1-17]
-
-Note: Linked List data structure, in place of iteration over while loops in Ruby.
+Note: Explain the code.
 
 ---
 
 <img src="assets/dog-sign-thanks.jpg" width="75%" />
+
+---
+
+### Mojotech.com
+#### yes, we're hiring
+
 
 ---
 
